@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Diplomacy - AI Territory Control</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">🎲</span>
+        <h1>Agent Diplomacy</h1>
+      </div>
+      <div class="game-info" id="gameInfo">
+        <span class="status-indicator" id="statusIndicator"></span>
+        <span id="gamePhase">Waiting...</span>
+        <span id="gameTurn">Turn: -</span>
+        <span id="phaseTimer">--:--</span>
+      </div>
+      <div class="header-actions">
+        <button id="newGameBtn" class="btn btn-primary">New Game</button>
+        <button id="toggleSoundBtn" class="btn btn-icon">🔊</button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Left Panel: Map -->
+      <section class="map-section">
+        <div class="battle-log" id="battleLog" style="
+          position: absolute;
+          top: 10px;
+          left: 10px;
+          background: rgba(0,0,0,0.8);
+          color: #fff;
+          padding: 10px;
+          border-radius: 8px;
+          max-width: 300px;
+          max-height: 200px;
+          overflow-y: auto;
+          font-size: 12px;
+          z-index: 10;
+          border: 1px solid #444;
+        ">
+          <strong>⚔️ Battle Log</strong>
+          <div id="battleLogContent" style="margin-top: 5px;">Waiting for battles...</div>
+        </div>
+        <div class="map-container" id="mapContainer">
+          <svg id="gameMap" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid meet">
+            <!-- World Map Background -->
+            <defs>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+              <pattern id="gridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1a1a2e" stroke-width="1"/>
+              </pattern>
+            </defs>
+            
+            <!-- Background -->
+            <rect width="1200" height="800" fill="#0a0a14"/>
+            <rect width="1200" height="800" fill="url(#gridPattern)"/>
+            
+            <!-- Continents (Simplified shapes) -->
+            <g id="continents" opacity="0.3">
+              <!-- North America -->
+              <path d="M 50 50 L 350 50 L 400 150 L 350 300 L 200 350 L 100 300 L 50 200 Z" fill="#2a3a4a"/>
+              <!-- South America -->
+              <path d="M 280 360 L 380 360 L 400 450 L 350 600 L 280 550 Z" fill="#3a4a3a"/>
+              <!-- Europe -->
+              <path d="M 450 80 L 650 80 L 680 180 L 600 250 L 480 220 L 450 150 Z" fill="#4a3a3a"/>
+              <!-- Africa -->
+              <path d="M 480 260 L 680 260 L 700 400 L 650 550 L 550 580 L 480 450 Z" fill="#4a4a3a"/>
+              <!-- Asia -->
+              <path d="M 700 80 L 1100 80 L 1150 200 L 1100 400 L 900 450 L 750 350 L 700 200 Z" fill="#3a4a4a"/>
+              <!-- Australia -->
+              <path d="M 900 480 L 1100 480 L 1120 600 L 950 620 L 900 550 Z" fill="#4a3a4a"/>
+            </g>
+            
+            <g id="connections"></g>
+            <g id="territories"></g>
+            <g id="armies"></g>
+          </svg>
+        </div>
+        <div class="map-legend">
+          <div class="legend-item">
+            <span class="legend-color" style="background: #dc143c;"></span>
+            <span>Conqueror</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background: #4169e1;"></span>
+            <span>Diplomat</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background: #800080;"></span>
+            <span>Deceiver</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background: #ffa500;"></span>
+            <span>Opportunist</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background: #228b22;"></span>
+            <span>Balanced</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background: #708090;"></span>
+            <span>Isolationist</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-color" style="background: #8b0000;"></span>
+            <span>Avenger</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Panel: Info -->
+      <aside class="info-section">
+        <!-- Tabs -->
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="conversations">💬 Conversations</button>
+          <button class="tab-btn" data-tab="reputation">📊 Reputation</button>
+          <button class="tab-btn" data-tab="agents">👥 Agents</button>
+          <button class="tab-btn" data-tab="history">📜 History</button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+          <!-- Conversations Tab -->
+          <div id="conversationsTab" class="tab-panel active">
+            <div class="conversations-list" id="conversationsList">
+              <div class="empty-state">No conversations yet...</div>
+            </div>
+          </div>
+
+          <!-- Reputation Tab -->
+          <div id="reputationTab" class="tab-panel">
+            <div class="reputation-list" id="reputationList">
+              <div class="empty-state">Reputation data will appear here...</div>
+            </div>
+          </div>
+
+          <!-- Agents Tab -->
+          <div id="agentsTab" class="tab-panel">
+            <div class="agents-list" id="agentsList">
+              <div class="empty-state">Agent information will appear here...</div>
+            </div>
+          </div>
+
+          <!-- History Tab -->
+          <div id="historyTab" class="tab-panel">
+            <div class="history-list" id="historyList">
+              <div class="empty-state">Game history will appear here...</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <!-- New Game Modal -->
+    <div id="newGameModal" class="modal">
+      <div class="modal-content">
+        <h2>Create New Game</h2>
+        <form id="newGameForm">
+          <div class="form-group">
+            <label>Map Type</label>
+            <select id="mapType" name="mapType">
+              <option value="classic">Classic World</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Max Turns</label>
+            <input type="number" id="maxTurns" name="maxTurns" value="50" min="10" max="100">
+          </div>
+          <div class="form-group">
+            <label>Agent Selection</label>
+            <div class="agent-selection" id="agentSelection">
+              <!-- Will be populated by JS -->
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" id="cancelNewGame">Cancel</button>
+            <button type="submit" class="btn btn-primary">Create Game</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="gameOverModal" class="modal">
+      <div class="modal-content">
+        <h2>🎉 Game Over!</h2>
+        <div id="winnerInfo">
+          <div class="winner-announcement">
+            <span class="winner-crown">👑</span>
+            <h3 id="winnerName">Winner Name</h3>
+            <p id="winReason">Victory by domination</p>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-primary" id="viewReplayBtn">View Replay</button>
+          <button class="btn btn-secondary" id="newGameAfterEnd">New Game</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/map.js"></script>
+  <script src="/js/client.js"></script>
+</body>
+</html>
