@@ -20,15 +20,15 @@ class GameState extends EventEmitter {
     this.lastActivity = Date.now();
     this.winner = null;
     
-    // Phase timing - FAST for exciting gameplay
+    // Phase timing - WATCHABLE gameplay
     this.phaseStartTime = null;
     this.phaseDuration = {
-      negotiation: 3000,  // 3 seconds for negotiation
-      commit: 2000,       // 2 seconds for move commitments
-      resolve: 3000       // 3 seconds for resolution animation
+      negotiation: 15000,  // 15 seconds for negotiation (read agent chats)
+      commit: 10000,       // 10 seconds for move commitments
+      resolve: 8000        // 8 seconds for resolution animation (watch battles)
     };
     
-    this.maxTurns = 5;   // Only 5 turns = ~40 second game
+    this.maxTurns = 10;   // 10 turns = ~5.5 minute game
   }
 
   // Territory management
