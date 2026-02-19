@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: agent-diplomacy
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node src/server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DB_PATH
+        value: /tmp/games.db
+      - key: ALLOWED_ORIGINS
+        value: https://agent-diplomacy.onrender.com,http://localhost:3000
+    autoDeploy: true
