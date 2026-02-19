@@ -1,18 +1,29 @@
+# Agent Diplomacy - Render Starter Plan Configuration
+# NOTE: Using SQLite with persistent disk (Starter plan feature)
+# For PostgreSQL migration, see MIGRATE_TO_POSTGRES.md
 services:
   - type: web
     name: agent-diplomacy
     runtime: node
-    plan: free
+    plan: starter
     buildCommand: npm install
     startCommand: node src/server.js
     healthCheckPath: /api/health
+    disk:
+      name: diplomacy-data
+      mountPath: /data
+      sizeGB: 1
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 10000
       - key: DB_PATH
-        value: /tmp/games.db
+        value: /data/games.db
       - key: ALLOWED_ORIGINS
-        value: https://agent-diplomacy.onrender.com,http://localhost:3000
+        value: https://agent-diplomacy.onrender.com
+      - key: ROUNDS_CONFIG
+        value: '{"negotiation":15,"commit":10,"resolve":8}'
+      - key: MAX_TURNS
+        value: '10'
     autoDeploy: true
