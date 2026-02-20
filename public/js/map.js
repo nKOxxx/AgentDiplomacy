@@ -79,6 +79,17 @@ const MapRenderer = {
     'agent-7': '#8b0000'
   },
 
+  onTerritoryClick(territoryId) {
+    // Dispatch custom event that client.js can listen for
+    const event = new CustomEvent('territoryClick', { detail: { territoryId } });
+    document.dispatchEvent(event);
+    
+    // Highlight the territory
+    this.highlightTerritory(territoryId, '#ffff00');
+    
+    console.log('Territory clicked:', territoryId);
+  },
+
   render(gameState) {
     this.renderConnections(gameState);
     this.renderTerritories(gameState);
@@ -156,6 +167,13 @@ const MapRenderer = {
 
       g.appendChild(circle);
       g.appendChild(label);
+      
+      // Add click handler
+      g.addEventListener('click', () => {
+        this.onTerritoryClick(territory.id);
+      });
+      g.style.cursor = 'pointer';
+      
       territoriesGroup.appendChild(g);
 
       // Store reference

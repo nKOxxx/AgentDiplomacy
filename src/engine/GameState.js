@@ -473,7 +473,8 @@ class GameState extends EventEmitter {
         owner: t.owner,
         armies: t.armies,
         region: t.region,
-        continent: t.continent
+        continent: t.continent,
+        neighbors: t.neighbors
       })),
       conversations: this.conversations.filter(c => c.type === 'public'),
       winner: this.winner,

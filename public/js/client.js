@@ -546,7 +546,30 @@ const DiplomacyClient = {
       this.hideGameOverModal();
       this.showNewGameModal();
     });
+
+    // Territory click events from MapRenderer
+    document.addEventListener('territoryClick', (e) => {
+      this.handleTerritoryClick(e.detail.territoryId);
+    });
   },
+
+  handleTerritoryClick(territoryId) {
+    // Find territory data
+    const territory = this.gameState?.territories?.find(t => t.id === territoryId);
+    if (!territory) return;
+
+    // Find owner agent
+    const owner = this.gameState?.agents?.find(a => a.id === territory.owner);
+    
+    // Show info (you could show a tooltip or panel here)
+    console.log('Territory:', territory.name);
+    console.log('Owner:', owner?.name || 'Neutral');
+    console.log('Armies:', territory.armies);
+    
+    // Show simple alert for now (can be replaced with nicer UI)
+    const info = `${territory.name}\nOwner: ${owner?.name || 'Neutral'}\nArmies: ${territory.armies}`;
+    // Uncomment to show alert: alert(info);
+  }
 
   setupTabs() {
     const tabBtns = document.querySelectorAll('.tab-btn');
