@@ -91,6 +91,9 @@ const MapRenderer = {
   },
 
   render(gameState) {
+    // Clear any previous winner markings
+    this.clearWinner();
+    
     this.renderConnections(gameState);
     this.renderTerritories(gameState);
     this.renderArmies(gameState);
@@ -282,6 +285,25 @@ const MapRenderer = {
     const svg = document.getElementById('gameMap');
     const existing = svg.querySelectorAll('.alliance-line, .betrayal-line');
     existing.forEach(el => el.remove());
+  },
+
+  // Clear winner markings
+  clearWinner() {
+    const svg = document.getElementById('gameMap');
+    if (!svg) return;
+    
+    // Remove crown
+    const crown = svg.querySelector('.winner-crown');
+    if (crown) crown.remove();
+    
+    // Remove gold styling from all territories
+    this.territories.forEach(territory => {
+      if (territory && territory.circle) {
+        territory.circle.style.filter = '';
+        territory.circle.setAttribute('stroke', 'none');
+        territory.circle.setAttribute('stroke-width', '0');
+      }
+    });
   },
 
   // Render alliance lines between agents
