@@ -847,3 +847,43 @@ body {
   50% { opacity: 1; transform: translateX(0) scale(1.1); }
   100% { opacity: 1; transform: translateX(0) scale(1); }
 }
+
+/* === DIPLOMATIC VISUALIZATIONS === */
+
+/* Alliance lines - green dashed */
+.alliance-line {
+  animation: alliancePulse 2s ease-in-out infinite;
+  opacity: 0.8;
+}
+
+@keyframes alliancePulse {
+  0%, 100% { opacity: 0.6; stroke-width: 3; }
+  50% { opacity: 1; stroke-width: 5; }
+}
+
+/* Betrayal lines - red dashed */
+.betrayal-line {
+  animation: betrayalFlash 1s ease-in-out infinite;
+  opacity: 0.9;
+}
+
+@keyframes betrayalFlash {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; filter: drop-shadow(0 0 8px red); }
+}
+
+/* Winner crown */
+.winner-crown {
+  animation: crownBounce 1.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 5px gold);
+}
+
+@keyframes crownBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* Winner glow on territories */
+.territory-path {
+  transition: all 0.5s ease;
+}

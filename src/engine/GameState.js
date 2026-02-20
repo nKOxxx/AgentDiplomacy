@@ -20,6 +20,9 @@ class GameState extends EventEmitter {
     this.lastActivity = Date.now();
     this.winner = null;
     
+    // Diplomatic events for visualization
+    this.diplomaticEvents = []; // {type: 'alliance'|'betrayal', from: agentId, to: agentId, turn, timestamp}
+    
     // Phase timing - FAST PACED gameplay (10-12s total per round)
     this.phaseStartTime = null;
     this.phaseDuration = {
@@ -477,10 +480,29 @@ class GameState extends EventEmitter {
         neighbors: t.neighbors
       })),
       conversations: this.conversations.filter(c => c.type === 'public'),
+      diplomaticEvents: this.diplomaticEvents.slice(-10), // Last 10 events
       winner: this.winner,
       phaseStartTime: this.phaseStartTime,
       phaseDuration: this.phaseDuration[this.phase]
     };
+  }
+
+  // Log diplomatic events (alliances, betrayals)
+  logDiplomaticEvent(type, fromAgentId, toAgentId, details = {}) {
+    const event = {
+      id: crypto.randomUUID(),
+      type, // 'alliance', 'betrayal', 'deal'
+      from: fromAgentId,
+      to: toAgentId,
+      turn: this.turn,
+      phase: this.phase,
+      details,
+      timestamp: Date.now()
+    };
+    
+    this.diplomaticEvents.push(event);
+    this.emit('diplomaticEvent', event);
+    return event;
   }
 
   // Get agent private state

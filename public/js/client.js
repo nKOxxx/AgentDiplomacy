@@ -365,6 +365,13 @@ const DiplomacyClient = {
     if (typeof MapRenderer !== 'undefined' && this.gameState) {
       try {
         MapRenderer.render(this.gameState);
+        MapRenderer.renderAlliances(this.gameState);
+        
+        // Mark winner if game ended
+        if (this.gameState.phase === 'ended' && this.gameState.winner) {
+          MapRenderer.markWinner(this.gameState);
+        }
+        
         console.log('Map rendered successfully');
       } catch (err) {
         console.error('MapRenderer error:', err);

@@ -277,6 +277,95 @@ const MapRenderer = {
     }, 2000);
   },
 
+  // Clear alliance lines
+  clearAlliances() {
+    const svg = document.getElementById('gameMap');
+    const existing = svg.querySelectorAll('.alliance-line, .betrayal-line');
+    existing.forEach(el => el.remove());
+  },
+
+  // Render alliance lines between agents
+  renderAlliances(gameState) {
+    this.clearAlliances();
+    
+    if (!gameState.diplomaticEvents || gameState.diplomaticEvents.length === 0) return;
+    
+    const svg = document.getElementById('gameMap');
+    const recentEvents = gameState.diplomaticEvents.slice(-5); // Show last 5
+    
+    recentEvents.forEach(event => {
+      // Find territories owned by these agents
+      const fromTerritories = gameState.territories.filter(t => t.owner === event.from);
+      const toTerritories = gameState.territories.filter(t => t.owner === event.to);
+      
+      if (fromTerritories.length === 0 || toTerritories.length === 0) return;
+      
+      // Use their first territory as anchor point
+      const fromPos = this.territoryPositions[fromTerritories[0].id];
+      const toPos = this.territoryPositions[toTerritories[0].id];
+      
+      if (!fromPos || !toPos) return;
+      
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', fromPos.x);
+      line.setAttribute('y1', fromPos.y);
+      line.setAttribute('x2', toPos.x);
+      line.setAttribute('y2', toPos.y);
+      
+      if (event.type === 'alliance') {
+        line.setAttribute('class', 'alliance-line');
+        line.setAttribute('stroke', '#4caf50');
+        line.setAttribute('stroke-width', '3');
+        line.setAttribute('stroke-dasharray', '5,5');
+      } else if (event.type === 'betrayal') {
+        line.setAttribute('class', 'betrayal-line');
+        line.setAttribute('stroke', '#f44336');
+        line.setAttribute('stroke-width', '4');
+        line.setAttribute('stroke-dasharray', '10,3');
+      }
+      
+      svg.appendChild(line);
+      
+      // Remove after 8 seconds
+      setTimeout(() => line.remove(), 8000);
+    });
+  },
+
+  // Mark winner with crown and glow
+  markWinner(gameState) {
+    if (!gameState.winner) return;
+    
+    // Find winner's territories
+    const winnerTerritories = gameState.territories.filter(t => t.owner === gameState.winner);
+    
+    winnerTerritories.forEach(t => {
+      const territory = this.territories.get(t.id);
+      if (territory && territory.circle) {
+        territory.circle.style.filter = 'drop-shadow(0 0 15px gold)';
+        territory.circle.setAttribute('stroke', '#ffd700');
+        territory.circle.setAttribute('stroke-width', '4');
+      }
+    });
+    
+    // Add crown to winner's first territory
+    if (winnerTerritories.length > 0) {
+      const firstTerritory = this.territories.get(winnerTerritories[0].id);
+      if (firstTerritory) {
+        const pos = this.territoryPositions[winnerTerritories[0].id];
+        const svg = document.getElementById('gameMap');
+        
+        const crown = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        crown.setAttribute('x', pos.x - 10);
+        crown.setAttribute('y', pos.y - 35);
+        crown.setAttribute('font-size', '24');
+        crown.setAttribute('class', 'winner-crown');
+        crown.textContent = '👑';
+        
+        svg.appendChild(crown);
+      }
+    }
+  }
+
   // Show territory conquest (change of ownership)
   showConquest(territoryId, newOwner) {
     const territory = this.territories.get(territoryId);
