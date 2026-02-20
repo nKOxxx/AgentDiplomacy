@@ -364,7 +364,7 @@ const MapRenderer = {
         svg.appendChild(crown);
       }
     }
-  }
+  },
 
   // Show territory conquest (change of ownership)
   showConquest(territoryId, newOwner) {
