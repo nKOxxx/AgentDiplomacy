@@ -163,12 +163,105 @@ const DiplomacyClient = {
       document.body.classList.remove('phase-transition');
     }, 500);
     
+    // Phase-specific visual feedback
+    this.showPhaseVisuals(data.phase);
+    
     // If resolve phase, re-render to show battle results
     if (data.phase === 'resolve') {
       this.renderMap();
     }
     
     this.updatePhaseUI();
+  },
+
+  showPhaseVisuals(phase) {
+    // Clear previous phase visuals
+    document.querySelectorAll('.negotiating, .committed, .battle-ready').forEach(el => {
+      el.classList.remove('negotiating', 'committed', 'battle-ready');
+    });
+    
+    switch(phase) {
+      case 'negotiation':
+        this.showNegotiationActivity();
+        break;
+      case 'commit':
+        this.showCommitActivity();
+        break;
+      case 'resolve':
+        this.showResolveActivity();
+        break;
+    }
+  },
+
+  showNegotiationActivity() {
+    // Pulse active agents during negotiation
+    const agentCards = document.querySelectorAll('.agent-card');
+    agentCards.forEach((card, index) => {
+      setTimeout(() => {
+        card.classList.add('negotiating');
+      }, index * 200);
+    });
+    
+    // Show "negotiating" indicator in battle log
+    this.addBattleLog('💬 Agents are negotiating...', '#4caf50', false);
+  },
+
+  showCommitActivity() {
+    // Show commitment progress
+    const agentCards = document.querySelectorAll('.agent-card');
+    agentCards.forEach(card => {
+      card.classList.add('committed');
+    });
+    
+    this.addBattleLog('✍️ Agents committing moves...', '#ff9800', false);
+  },
+
+  showResolveActivity() {
+    // Prepare for battle visualization
+    const agentCards = document.querySelectorAll('.agent-card');
+    agentCards.forEach(card => {
+      card.classList.add('battle-ready');
+    });
+    
+    this.addBattleLog('⚔️ Resolving battles...', '#f44336', false);
+  },
+
+  showNegotiationSuccess(agent1Id, agent2Id, dealType) {
+    // Visual feedback for successful deal
+    const agents = document.querySelectorAll('.agent-card');
+    agents.forEach(card => {
+      const agentId = card.dataset.agentId;
+      if (agentId === agent1Id || agentId === agent2Id) {
+        card.classList.add('deal-success');
+        setTimeout(() => card.classList.remove('deal-success'), 2000);
+      }
+    });
+    
+    // Green flash on map between their territories
+    if (typeof MapRenderer !== 'undefined') {
+      MapRenderer.showDealSuccess(agent1Id, agent2Id);
+    }
+    
+    this.addBattleLog(`🤝 Deal struck!`, '#4caf50', false);
+  },
+
+  showNegotiationFailure(agent1Id, agent2Id, reason) {
+    // Visual feedback for failed/betrayed deal
+    const agents = document.querySelectorAll('.agent-card');
+    agents.forEach(card => {
+      const agentId = card.dataset.agentId;
+      if (agentId === agent1Id || agentId === agent2Id) {
+        card.classList.add('deal-failed');
+        setTimeout(() => card.classList.remove('deal-failed'), 2000);
+      }
+    });
+    
+    // Red flash on map
+    if (typeof MapRenderer !== 'undefined') {
+      MapRenderer.showDealFailure(agent1Id, agent2Id);
+    }
+    
+    this.addBattleLog(`💥 Deal broken!`, '#f44336', false);
   },
 
   handleTurnStart(data) {
@@ -386,7 +479,7 @@ const DiplomacyClient = {
     if (!container || !this.gameState?.agents) return;
 
     container.innerHTML = this.gameState.agents.map(agent => `
-      <div class="agent-card">
+      <div class="agent-card" data-agent-id="${agent.id}">
         <div class="agent-avatar" style="background: ${agent.color}">
           ${agent.name.charAt(0)}
         </div>

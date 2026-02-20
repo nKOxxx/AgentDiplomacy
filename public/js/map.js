@@ -399,6 +399,48 @@ const MapRenderer = {
         }
       }, index * 500); // Stagger battles
     });
+  },
+
+  // Show deal success animation between two agents
+  showDealSuccess(agent1Id, agent2Id) {
+    // Find territories owned by these agents from gameState
+    const svg = document.getElementById('gameMap');
+    if (!svg) return;
+    
+    // We'll need to access gameState from client - for now create visual at center
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('class', 'deal-success-line');
+    
+    // Create connecting line between their territories if we can find them
+    // For now, create a celebration burst at random positions
+    const burst = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    burst.setAttribute('cx', 600);
+    burst.setAttribute('cy', 400);
+    burst.setAttribute('r', 10);
+    burst.setAttribute('fill', '#4caf50');
+    burst.setAttribute('opacity', '0.8');
+    burst.style.animation = 'dealLineSuccess 2s ease-out forwards';
+    
+    svg.appendChild(burst);
+    setTimeout(() => burst.remove(), 2000);
+  },
+
+  // Show deal failure/betrayal animation
+  showDealFailure(agent1Id, agent2Id) {
+    const svg = document.getElementById('gameMap');
+    if (!svg) return;
+    
+    // Create explosion effect
+    const burst = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    burst.setAttribute('cx', 600);
+    burst.setAttribute('cy', 400);
+    burst.setAttribute('r', 10);
+    burst.setAttribute('fill', '#f44336');
+    burst.setAttribute('opacity', '0.8');
+    burst.style.animation = 'dealLineFail 2s ease-out forwards';
+    
+    svg.appendChild(burst);
+    setTimeout(() => burst.remove(), 2000);
   }
 };
 

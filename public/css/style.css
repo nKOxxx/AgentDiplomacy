@@ -883,6 +883,133 @@ body {
   50% { transform: translateY(-5px); }
 }
 
+/* === PHASE ACTIVITY VISUALS === */
+
+/* Agent negotiating - pulsing blue */
+.agent-card.negotiating {
+  animation: negotiatePulse 2s ease-in-out infinite;
+  border-color: #2196f3;
+}
+
+@keyframes negotiatePulse {
+  0%, 100% { 
+    box-shadow: 0 0 5px rgba(33, 150, 243, 0.5);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 20px rgba(33, 150, 243, 0.8);
+    transform: scale(1.02);
+  }
+}
+
+/* Agent committed - solid orange */
+.agent-card.committed {
+  border-color: #ff9800;
+  box-shadow: 0 0 15px rgba(255, 152, 0, 0.6);
+}
+
+/* Agent battle-ready - pulsing red */
+.agent-card.battle-ready {
+  animation: battleReadyPulse 1s ease-in-out infinite;
+  border-color: #f44336;
+}
+
+@keyframes battleReadyPulse {
+  0%, 100% { 
+    box-shadow: 0 0 5px rgba(244, 67, 54, 0.5);
+  }
+  50% { 
+    box-shadow: 0 0 25px rgba(244, 67, 54, 0.9);
+  }
+}
+
+/* Deal success - green flash */
+.agent-card.deal-success {
+  animation: dealSuccess 2s ease-out;
+}
+
+@keyframes dealSuccess {
+  0% { 
+    background: rgba(76, 175, 80, 0);
+    box-shadow: 0 0 0 rgba(76, 175, 80, 0);
+  }
+  30% { 
+    background: rgba(76, 175, 80, 0.3);
+    box-shadow: 0 0 30px rgba(76, 175, 80, 0.8);
+  }
+  100% { 
+    background: rgba(76, 175, 80, 0);
+    box-shadow: 0 0 0 rgba(76, 175, 80, 0);
+  }
+}
+
+/* Deal failure - red flash */
+.agent-card.deal-failed {
+  animation: dealFail 2s ease-out;
+}
+
+@keyframes dealFail {
+  0% { 
+    background: rgba(244, 67, 54, 0);
+    box-shadow: 0 0 0 rgba(244, 67, 54, 0);
+  }
+  30% { 
+    background: rgba(244, 67, 54, 0.3);
+    box-shadow: 0 0 30px rgba(244, 67, 54, 0.8);
+  }
+  100% { 
+    background: rgba(244, 67, 54, 0);
+    box-shadow: 0 0 0 rgba(244, 67, 54, 0);
+  }
+}
+
+/* Deal success on map */
+.deal-success-line {
+  stroke: #4caf50;
+  stroke-width: 4;
+  animation: dealLineSuccess 2s ease-out forwards;
+}
+
+@keyframes dealLineSuccess {
+  0% { 
+    stroke-opacity: 0;
+    stroke-width: 1;
+  }
+  50% { 
+    stroke-opacity: 1;
+    stroke-width: 6;
+    filter: drop-shadow(0 0 10px #4caf50);
+  }
+  100% { 
+    stroke-opacity: 0;
+    stroke-width: 1;
+  }
+}
+
+/* Deal failure on map */
+.deal-fail-line {
+  stroke: #f44336;
+  stroke-width: 4;
+  stroke-dasharray: 8, 4;
+  animation: dealLineFail 2s ease-out forwards;
+}
+
+@keyframes dealLineFail {
+  0% { 
+    stroke-opacity: 0;
+    stroke-width: 1;
+  }
+  50% { 
+    stroke-opacity: 1;
+    stroke-width: 8;
+    filter: drop-shadow(0 0 15px #f44336);
+  }
+  100% { 
+    stroke-opacity: 0;
+    stroke-width: 1;
+  }
+}
+
 /* Winner glow on territories */
 .territory-path {
   transition: all 0.5s ease;
