@@ -348,19 +348,6 @@ const DiplomacyClient = {
       timerEl.textContent = '--';
     }
   },
-      const secs = seconds % 60;
-      
-      timerEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
-      
-      if (remaining < 10000) {
-        timerEl.style.color = 'var(--danger)';
-      } else {
-        timerEl.style.color = 'var(--accent-secondary)';
-      }
-    } else {
-      timerEl.textContent = '--:--';
-    }
-  },
 
   renderMap() {
     console.log('renderMap called, MapRenderer exists:', typeof MapRenderer !== 'undefined');
