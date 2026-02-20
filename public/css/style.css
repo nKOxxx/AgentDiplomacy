@@ -128,9 +128,13 @@ body {
 }
 
 #phaseTimer {
-  font-family: 'Courier New', monospace;
-  font-weight: bold;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 600;
+  font-size: 1.1em;
   color: var(--accent-secondary);
+  transition: color 0.3s ease;
+  min-width: 60px;
+  text-align: center;
 }
 
 .header-actions {
