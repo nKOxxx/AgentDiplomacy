@@ -331,15 +331,26 @@ const DiplomacyClient = {
       const elapsed = Date.now() - this.gameState.phaseStartTime;
       const remaining = Math.max(0, this.gameState.phaseDuration - elapsed);
       
-      const seconds = Math.floor(remaining / 1000);
-      const deciseconds = Math.floor((remaining % 1000) / 100);
+      const seconds = Math.ceil(remaining / 1000);
       
-      // Show seconds.tenths (e.g., "3.2" for 3.2 seconds left)
-      timerEl.textContent = `${seconds}.${deciseconds}s`;
+      // Show clean whole seconds with phase label
+      const phaseNames = {
+        negotiation: '💬',
+        commit: '✍️',
+        resolve: '⚔️'
+      };
+      const phaseIcon = phaseNames[this.gameState?.phase] || '⏱️';
       
-      if (remaining < 3000) {
+      timerEl.textContent = `${phaseIcon} ${seconds}s`;
+      timerEl.style.letterSpacing = '0.05em';
+      
+      // Calmer visual feedback - only change color in final 2 seconds
+      if (remaining < 2000) {
         timerEl.style.color = 'var(--danger)';
         timerEl.style.fontWeight = 'bold';
+      } else if (remaining < 4000) {
+        timerEl.style.color = 'var(--warning, #ffa500)';
+        timerEl.style.fontWeight = 'normal';
       } else {
         timerEl.style.color = 'var(--accent-secondary)';
         timerEl.style.fontWeight = 'normal';
@@ -556,7 +567,7 @@ const DiplomacyClient = {
     // Show simple alert for now (can be replaced with nicer UI)
     const info = `${territory.name}\nOwner: ${owner?.name || 'Neutral'}\nArmies: ${territory.armies}`;
     // Uncomment to show alert: alert(info);
-  }
+  },
 
   setupTabs() {
     const tabBtns = document.querySelectorAll('.tab-btn');
